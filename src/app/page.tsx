@@ -27,6 +27,26 @@ export default function Home() {
 
   const [dataSend, setDataSend] = useState<ContactFields>(initialContactState);
   const [error, setError] = useState<ErrorField>(initialErrorState);
+  const [status, setStatus] = useState<Boolean>(false);
+  const [success, setSuccess] = useState<Boolean>(false);
+  const [result, setResult] = useState<String>("");
+
+  const handleSubmit = async(e: any) => {
+    e.preventDefault();
+
+    setError(initialErrorState);
+    let hasErr = false;
+    await Object.keys(initialErrorState).map((err) => {
+      if (dataSend[err] == "" || dataSend[err] == undefined){
+        setError({...error, [err]: true});
+        hasErr=true
+
+      }
+    })
+
+    if (hasErr) return;
+    console.log(dataSend);
+  }
   return (
     <main>
 
@@ -43,9 +63,12 @@ export default function Home() {
         onBlur={() => setError({...error, email: true})}
         onChange={(e) => setDataSend({...dataSend,email: e.target.value})}/>
         {error.email && (!dataSend.email || !/\S+@\S+\S+\.\S+/.test(dataSend.email)) && <span>Please write a valid email</span>}
-        <button type="submit">
+        <button onClick={handleSubmit} type="submit">
           Submit
         </button>
+
+        {status && <div> Sending...</div>}
+        {success && <div>{result}</div>}
         </form>
       </div>
     </main>
